@@ -1,0 +1,427 @@
+---
+title: "Lists"
+author: "Dr. Shoemaker"
+date: "DATA 2401"
+output:
+  slidy_presentation:
+    highlight: tango
+    theme: lumen
+  html_document:
+    fig_height: 3
+    fig_width: 4
+    highlight: tango
+    theme: cosmo
+  ioslides_presentation:
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(alr4) # this line will break if you haven't installed the package yet. 
+```
+
+## Logistical Notes
+
+
+- Homework 2 due at midnight. Homework 3 assigned today.
+- Exam in class, a week from today. 
+  + You'll need access to Canvas and R/RStudio, and will be downloading/uploading files. 
+  + Review on Tuesday, **come with questions**. You should be able to understand and do all examples/in class assignments/homeworks. 
+
+
+
+# Extra Vector Information
+
+First, amendments to the vector notes: 
+
+- Vectors can be *named*, i.e., the elements can have names. Instead of "element 1" and "element 2", you could have "height" and "weight" 
+  + You can access the names using `names()` and you can change them there too
+  + This isn't used much, but I wanted you to know it could be done. 
+
+```{r}
+# Making a vector
+x <- c("First" = 1/2, "Second" = 1/4, "Third" = 1/4)
+x +1 
+x[1]
+x["First"]
+
+y <- 1:3 
+names(y) <- c("a", "b")
+y 
+
+# accessing the names 
+names(x) # returns the names of the vector elements
+names(x)[1]  # shows the first element of the names
+names(x)[1] <- "1st" # *changes* the first element of the names to "1st"
+x
+```
+
+   + Note here that this is our first instance of using indexing by element on a function. What's happening here is that `names()` is returning a vector, and then `[1]` is accessing the first element of that vector.  
+   
+
+# More Logical operators 
+
+- one more logical operator -- `%in%` tells you if the object on the left can be found anywhere "in" the object on the right. 
+
+```{r}
+one_to_ten <- 1:10
+
+8 %in% one_to_ten # is 8 in one_to_ten
+11 %in% one_to_ten
+c(8, 11) %in% one_to_ten # checks both! 
+```
+
+
+- several more boolean operators, for fun. 
+  + `xor()` checks if *one and only one* of two conditions are true
+  + `any(cond1, cond2, cond3, ...)` checks if *any* of the conditions are true.
+  + `all(cond1, cond2, cond3, ...)` checks if *all* of the conditions are true.
+  
+
+```{r}
+x <- 1:10
+any(x > 0) # checks if any of the contents are positive
+all(x > 5) # checks if all of the contents are greater than 5
+```
+  
+# Some reference tables
+
+**Boolean Operators:**
+
+|Operator | Syntax | Tests | 
+| :------ | :----- | :---- | 
+| `&`    |  `cond1 & cond2`   |  Are both `cond1` and `cond2` true?   |
+| `|`    |  `cond1 | cond2`   |  Is one or more of `cond1` and `cond2` true?   |
+| `xor`    |  `cond1 xor cond2`   |   Is exactly one of `cond1` and `cond2` true?   |
+| `!`    |   `!cond1`  |  Is cond1 false?    |
+|  `any`   |  `any(cond1, cond2, cond3, ...)`   |  Are any of the conditions true?   |
+|   `all`  |  `all(cond1, cond2, cond3, ...)`   |  Are all of the conditions true?   |
+
+**Logical Operators:**
+
+|Operator | Syntax | Tests | 
+| :------ | :----- | :---- | 
+| `>` | `a > b` | Is a greater than b? |
+| `>=` | `a >= b` | Is a greater than or equal to b? |
+| `<` | `a < b`  |Is a less than b?  |
+| `<=` | `a <= b`  | Is a less than or equal to b?  |
+| `==` | `a == b`  | Is a equal to b? |
+| `!=` | `a != b`  | Is a not equal to b? |
+| `%in%` | `a %in% c(a, b, c)`  | Is a in the vector c(a, b, c)?|
+
+
+
+# Lists
+
+We discussed how you can't store elements of different types in vectors. If you want to do that, you need to use a **list**, an R data type that can contain multiple types of data, such as both characters and strings, or even vectors or other lists. 
+
+- Lists are a common way to organize data, you can store someone's name, job, email, and salary all in one place. 
+
+- Like vectors, you can name the elements of the list. Unlike vectors, it's really useful to do so in a list. 
+
+## Creating a List
+
+The `list()` function is how you make a list. You pass it any number of arguments, separated by commas, that you want in the list. (it's a lot like `c()` is for vectors... even though `vector()` is also a function.)
+
+The difference is that you specify the tags/names for each argument, followed by and equals sign and the value you want in the list. 
+
+```{r}
+# create a vector of info about my dog
+# note how I'm putting the code on multiple lines to make it more legible. 
+    # As long as the statement isn't "finished" (has an ending comma), 
+    # R looks on the next line and keeps going
+my_first_dog <- list(
+ name = "AJ",
+ age = 11,
+ is_great = TRUE
+)
+```
+
+You can have vectors in lists: 
+
+```{r}
+my_dogs <- list(
+ name = c("AJ","Cassie"),
+ age = c(11,2),
+ is_great = c(TRUE, TRUE), 
+ weights = c(15, 45)
+)
+```
+
+You can also even have lists in lists:
+
+```{r}
+my_dogs <- list(
+ name = c("AJ","Cassie"),
+ age = c(11,2),
+ is_great = c(TRUE, TRUE), 
+ weights = c(15, 45),
+ favorites = list(toy = "ball", food = "chicken", thing = "naps")
+)
+
+# Note that the tags aren't necessary. 
+my_dogs_untagged <- list(
+ c("AJ","Cassie"),
+ c(11,2),
+ c(TRUE, TRUE), 
+ c(15, 45),
+ list(toy = "ball", food = "chicken", thing = "naps")
+)
+```
+
+
+
+Can I make these without the tags? Yes. Should I? No. These tags make your code clearer for other programmers to read, and it makes it easier for you to access certain elements. Which we will do right after this example.
+
+# Example
+
+** In the in-class repository **
+
+Let's make list in R. 
+
+- Make a list that contains the information on a single playing card. Suit, face, and value. 
+- Make a second list where each element contains all the options for suit, face, and value, respectively. 
+
+```{r}
+
+
+```
+
+# Accessing Elements
+
+Let's look at the output of printing my list. 
+
+```{r}
+my_dogs
+```
+
+You can also use the function `str`; it is useful for lists (and later, for data.frames) as it focuses on the structure of the object, telling you how it's built.
+
+```{r}
+str(my_dogs)
+```
+
+
+# Referencing Elements in Lists 
+
+## Dollar sign notation
+
+You can see that the element names are preceeded by a dollar sign (\$). You can access the elements in the list using **dollar sign notation**: refer to the element as `list_name$tag`.
+
+```{r}
+my_dogs$name
+my_dogs$favorites
+my_dogs$favorites$toy
+my_dogs$toy # this is "NULL" because I can't go directly to "toy"
+```
+
+## Double Bracket notation
+
+You can also access different elements of a list by using **double bracket notation** - you refer to  a specific element of a list by using two square brackets `[[]]`
+
+```{r}
+my_dogs[[2]]
+# my_dogs[[7]]  # this gives an error for  subscript out of bounds
+```
+
+You can also use the tag names in the double bracket notation, too: 
+
+```{r}
+# accessing the elements by tags AND double brackets
+my_dogs[["name"]]
+
+# you could store the tag string as a variable 
+tag_variable <- "age"
+my_dogs[[tag_variable]] # and use it to access elements too
+
+# and you can combine $ and [[]]
+# access the second list element of `$favorites`
+my_dogs$favorites[[2]] 
+
+```
+
+You *can* use a single bracket after the $, but, it returns a *sublist*, not an element. This is super important if you're going to pass that argument to something else that is expecting a single value or a vector. 
+
+```{r}
+# compare
+my_dogs[[2]] # just the value
+
+# vs
+my_dogs[2] # shows up like a list, cause it's a sublist
+
+is.list(my_dogs[1])
+
+# Why does it matter? R treats different types of objects differently. 
+
+# my_dog[2] + 1 ### this gives an error, adding 1 to a sublist
+my_dogs[[2]] + 1   # This does not, adding 1 to the element stored inside
+```
+
+You can always store these elements as their own variable if you needed to:
+
+```{r}
+# make a new list of just the favorites
+faves <- my_dogs$favorites
+faves
+
+# make a variable with just the name element
+dog_names <- my_dogs$name
+dog_names
+```
+
+
+# Modifying Lists
+
+Very similar to vectors, you can modify elements of lists by assigning a new value to the existing element. And you can create a whole new list element by assigning something to the tag/name that doesn't even exist yet, and get rid of one by setting it to `NULL`
+
+```{r}
+# Changing an existing element
+my_dogs$age
+my_dogs$age <- c(12,3)
+my_dogs$age
+
+# Adding an element by assigning to a new one
+my_dogs$color
+my_dogs$color <- c("Brown", "Black")
+
+# Removing an element by setting it to NULL
+my_dogs$favorites <- NULL
+str(my_dogs)
+
+```
+
+
+# Exercises: 
+
+** In the In-class repo for the day!  **
+
+If `Newlist <- list(a=1:10, b="Good morning", c="Hi")`, write an R statement that will add 1 to each element of the first vector in Newlist.
+
+```{r}
+Newlist <- list(a = 1:10, b = 'Good morning', c = 'Hi')
+
+```
+
+If `b <- list(a=1:10, c="Hello", d="AA")`, write an R expression that will give all elements of the first vector of b, except the second, and write another that returns only elements of `a` that are greater than 7.
+
+```{r}
+b <- list(a=1:10, c="Hello", d="AA")
+
+```
+
+Let `x <- list(a=5:10, c="Hello", d="AA")`, write an R statement to add a new item z = "NewItem" to the list x.
+
+```{r}
+x <- list(a=5:10, c="Hello", d="AA")
+
+```
+
+
+# Functions + Lists
+
+When we used functions on vectors, they just worked. It was great. Now, with lists, we'll need to do a little more work to make the functions do what we want them to do. 
+
+```{r}
+# make a list of numbers to round
+test_list <- list(1.1, 2.2, 3.3)
+test_list
+# round(test_list) # Error : non-numeric argument to mathematical function
+```
+
+
+The function `lapply()` ("list" apply) takes two arguments, the list you want applied to, and the function you want applied to each item on the list. The returned list is NEW. The original one isn't changed, `lapply` makes a copy of it. 
+
+```{r}
+# lapply the function round to test_list
+lapply(test_list, round)
+test_list
+```
+
+# Example: 
+
+If your list contains numeric information, you can `lapply` mean to each piece:
+
+```{r}
+# making some data using built-in R data. 
+# to do this yourself, you'll need to install and load the package `alr4`
+# install.packages("alr4")
+# library(alr4) 
+test_data <- list(score = salarygov$Score, salary = salarygov$MaxSalary )
+str(test_data)
+```
+
+ 
+
+```{r}
+means <- lapply(test_data, mean)
+means
+```
+
+
+
+# Matrices and Arrays
+
+An additional data type are matrices and arrays. Like a vector, a matrix must have all the same data type inside, but now we're two-dimensional. 
+
+## Matrix 
+
+You give the function `matrix()` a vector that you want put into a matrix, setting the number of rows you want with `nrow = `. 
+
+```{r}
+# put a vector 'die_rolls' into a 2-row matrix
+die_rolls <- 1:6
+die_matrix <- matrix(die_rolls, nrow = 2)
+die_matrix
+```
+
+Note that the matrix is filled up by column. You can make it fill by row with setting the argument `byrow = TRUE`
+
+```{r}
+matrix(die_rolls, nrow = 2, byrow = T)
+```
+
+To access a certain element of a matrix, you index by `[row, column]` of the element you want:
+
+```{r}
+die_matrix[2,3]  # row 2, column 3 of our die_matrix
+die_matrix[ , 3] # column 3
+x <- die_matrix[2, ]
+die_matrix[2, 1:2]
+```
+
+
+
+## Array 
+
+An array is an n-dimensional matrix. You can store a cube or hypercube of data here. To make one, give the vector you want to store as the first argument, then an atomic vector of the dimensions. So, if I wanted a 2x2x3 cube, I would do: `dim = c(2, 2, 3)`
+
+```{r}
+a <- array(c(11:14, 21:24, 31:34), dim = c(2, 2, 3))
+a
+```
+
+To access elements of this, you do [dim1, dim2, dim3] 
+
+```{r}
+a[1, 2, 3] # the first row, second column, of the third layer
+a[ , 2, 3] # the second column of the third layer
+a[ , , 3]
+```
+
+
+
+
+
+## Logistical Notes, again
+
+
+- Homework 2 due at midnight. Homework 3 assigned today.
+- Exam in class, a week from today. 
+  + You'll need access to Canvas and R/RStudio, and will be downloading/uploading files. 
+  + Review on Tuesday, **come with questions**. You should be able to understand and do all examples/in class assignments/homeworks. 
+
+
+
+
+
+
